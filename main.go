@@ -1,36 +1,41 @@
 package main
 
 import (
-	"errors"
+	"bufio"
 	"fmt"
+	"os"
+	"strings"
+
+	"example.com/note/note"
 )
 
 func main() {
-	title, content,err := getNoteData()
-	if err != nil{
-		fmt.Println(err)
-		return
-	}
+	title, content := getNoteData()
+ userNote,err:=	note.New(title,content)
+
+ if err!= nil{
+	fmt.Println(err)
+ }
+ userNote.Display()
 }
 
-func getNoteData()(string,string, error){
-	title,err := getUserInput("Note title")
-	if err != nil{
-		return "","",err
-	}
-	content ,err := getUserInput("Note content")
-	if err != nil{
-		return "","",err
-	}
-	return title, content, err
+func getNoteData()(string,string){
+	title := getUserInput("Note title")
+	
+	content := getUserInput("Note content")
+	
+	return title, content
 }
 
-func getUserInput(propt string) (string,error){
+func getUserInput(propt string) string{
 	fmt.Println(propt)
-	var value string
-	fmt.Scanln(&value)
-	if value == ""{
-		return "", errors.New("invalid empty string")
+	 reader :=bufio.NewReader(os.Stdin)
+	text,err :=reader.ReadString('\n')
+
+	if err != nil{
+		return ""
 	}
-	return value,nil
+	text = strings.TrimSuffix(text,"\n")
+	text = strings.TrimSuffix(text,"\r")
+	return text
 }
